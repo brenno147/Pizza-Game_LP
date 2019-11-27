@@ -2,12 +2,14 @@
 #include <stdlib.h>
 #include <conio.h>
 #include <time.h>
+#include <locale.h>
 
 void game_menu(); 
 void vs_ia_menu();
 void vs_ia();
 //void ranking();
 void creditos();
+int casa_Repetida();
 
 //Estrutura Jogador com nome, Pontuação e a posição atual do jogador no jogo.
 typedef struct{
@@ -18,6 +20,8 @@ typedef struct{
 
 void main()
 {
+	setlocale(LC_ALL,"");
+
     int opcao;
 
     //Menu inicial do jogo 
@@ -166,10 +170,12 @@ void vs_ia(char filename[50]){
 	}
 
 	int visitados[nodes]; //Vetor com todas as casas que já foram visitadas
+	int escolha;
 
 	//Laço que expressa a quantidade de jogadas que o usuário irá fazer.
 	for(int i = 0; i < nodes; i++){
 		
+		inicio:
 		system("cls");
 
 		//Laço que printa a coluna com a distancia de todas as casas para a posiçao em que o Jogador se encontra.
@@ -187,7 +193,15 @@ void vs_ia(char filename[50]){
 			printf("%i -> ", visitados[k]);
 		}
 
-		scanf("%i", &new_player.posicao);//Atualização da posição(Escolha da próxima casa a ser visitada) *Alterar futuramente
+		scanf("%i", &escolha);//Atualização da posição(Escolha da próxima casa a ser visitada) *Alterar futuramente
+
+		if(casa_Repetida(escolha, i, visitados)){
+			printf("Voce nao pode ir numa casa ja visitada");
+			system("pause");
+			goto inicio;
+		}
+
+		new_player.posicao = escolha;
 
 		printf("\n\n");
 
@@ -201,3 +215,12 @@ void vs_ia(char filename[50]){
 	fclose(fp);
 }
 
+int casa_Repetida(int escolha, int posicao, int casas_visitadas[]){
+
+	for(int i = 0; i <= posicao; i++){
+		if(casas_visitadas[i] == escolha){
+			return 1;
+		}
+	}
+	return 0;
+}
