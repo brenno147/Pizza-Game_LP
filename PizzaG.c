@@ -7,7 +7,6 @@
 void game_menu(); 
 void vs_ia_menu();
 void vs_ia();
-//void ranking();
 void creditos();
 int casa_Repetida();
 
@@ -78,17 +77,6 @@ void game_menu(){
 			goto inicio;
 	}
 }
-
-
-
-/*void ranking(){
-	printf("O ranking só vale para o modo contra o tempo\n\n");
-
-	FILE *fp;
-	fp = fopen("records.txt", "r");
-
-	fclose(fp);
-}*/
 
 
 void creditos(){
@@ -193,15 +181,16 @@ void vs_ia(char filename[50]){
 			printf("%i -> ", visitados[k]);
 		}
 
-		scanf("%i", &escolha);//Atualização da posição(Escolha da próxima casa a ser visitada) *Alterar futuramente
+		scanf("%i", &escolha);//Escolha da proxima posição
 
+		//Teste da escolha
 		if(casa_Repetida(escolha, i, visitados)){
-			printf("Voce nao pode ir numa casa ja visitada");
+			printf("Voce nao pode ir numa casa ja visitada\n\n");
 			system("pause");
 			goto inicio;
 		}
 
-		new_player.posicao = escolha;
+		new_player.posicao = escolha;//Atualização da posição
 
 		printf("\n\n");
 
@@ -215,6 +204,7 @@ void vs_ia(char filename[50]){
 	fclose(fp);
 }
 
+//Função que verifica se o usuário está indo em uma casa já visitada
 int casa_Repetida(int escolha, int posicao, int casas_visitadas[]){
 
 	for(int i = 0; i <= posicao; i++){
