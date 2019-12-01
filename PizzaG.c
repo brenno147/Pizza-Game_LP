@@ -4,7 +4,9 @@
 #include <time.h>
 #include <locale.h>
 
-void game_menu(); 
+void game_menu();
+void ranking_menu(); 
+void print_ranking();
 void vs_ia_menu();
 void vs_ia();
 void creditos();
@@ -15,6 +17,7 @@ typedef struct{
 	char nome[20];
 	int pontuacao;
 	int posicao;
+	int tempo;
 }Player;
 
 void main()
@@ -37,7 +40,7 @@ void main()
         goto inicio;
     case 2:
         system("cls");
-  
+  		ranking_menu();
         goto inicio;
     case 3:
         system("cls");
@@ -62,22 +65,71 @@ void game_menu(){
 
 	inicio:
 	system("cls");
-	printf("1 - Modo VS IA \n2 - Modo Contra o tempo\n3- Voltar\n");
+	printf("1 - Modo VS IA\n2 - Modo Contra o tempo\n3 - Modo IA\n4 - Tutorial\n5 - Voltar\n");
 	scanf("%d", &op);
 	switch(op) {
 		case 1:
 			vs_ia_menu();
-			break;
+			goto inicio;
 		case 2:
 
-			break;
+			goto inicio;
 		case 3:
+			goto inicio;
+		case 4:
+			goto inicio;
+		case 5:
 			break;
 		default:
 			goto inicio;
 	}
 }
 
+void ranking_menu(){
+	int op;
+
+	inicio:
+	system("cls");
+	printf("1 - Ranking facil\n2 - Ranking medio\n3 - Ranking dificil\n");
+	scanf("%d", &op);
+	switch(op){
+		case 1:
+			print_ranking("Rankings/records_facil.txt");
+			break;
+		case 2:
+			print_ranking("Rankings/records_medio.txt");
+			break;
+		case 3:
+			print_ranking("Rankings/record_dificil.txt");
+			break;
+		default:
+			goto inicio;
+	}
+}
+
+void print_ranking(char filename[50]){
+
+	system("cls");
+
+	FILE *fp;
+	fp = fopen(filename, "r");
+
+	char ranking_names[10][20];
+	int ranking_times[10];
+
+	for(int i = 0; i < 10; i++){
+		fscanf(fp, "%19s", ranking_names[i]);
+		fscanf(fp, "%i", &ranking_times[i]);
+	}
+
+	for(int i = 0; i < 10; i++){
+		printf("%s terminou o desafio em %i segundos\n", ranking_names[i], ranking_times[i]);
+	}
+
+	system("pause");
+
+	fclose(fp);
+}
 
 void creditos(){
 
