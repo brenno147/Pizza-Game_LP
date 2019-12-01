@@ -11,11 +11,12 @@ void vs_ia_menu();
 void vs_ia();
 void creditos();
 int casa_Repetida();
+int entregas_Feitas();
 
 //Estrutura Jogador com nome, Pontuação e a posição atual do jogador no jogo.
 typedef struct{
 	char nome[20];
-	int pontuacao;
+	int distancia;
 	int posicao;
 	int tempo;
 }Player;
@@ -187,7 +188,7 @@ void vs_ia(char filename[50]){
 
 	//Declara um novo Jogador e seta a posição inicial, no caso a casa 1, e a pontuação inicial
 	Player new_player;
-	new_player.pontuacao = 0;
+	new_player.distancia = 0;
 	new_player.posicao = 1;
 
 	printf("Digite seu nome:\n");
@@ -237,17 +238,27 @@ void vs_ia(char filename[50]){
 
 		//Teste da escolha
 		if(casa_Repetida(escolha, i, visitados)){
-			printf("Voce nao pode ir numa casa ja visitada\n\n");
-			system("pause");
-			goto inicio;
+			if(!entregas_Feitas(nodes, visitados)){
+				printf("Voce nao pode ir numa casa ja visitada\n\n");
+				system("pause");
+				goto inicio;
+			} else if (escolha != 1){
+				printf("Voce deve voltar para onde comecou\n\n");
+				system("pause");
+				goto inicio;
+			}
 		}
 
+		new_player.distancia += paths[new_player.posicao - 1][escolha - 1];
 		new_player.posicao = escolha;//Atualização da posição
 
 		printf("\n\n");
-
 		system("pause");
 	}
+
+	system("cls");
+	printf("Parabens voce terminou percorrendo %i km", new_player.distancia);
+	system("pause");
 
 	//time_t time_final = time(NULL);
 
@@ -265,4 +276,24 @@ int casa_Repetida(int escolha, int posicao, int casas_visitadas[]){
 		}
 	}
 	return 0;
+}
+
+int entregas_Feitas(int nodes, int casas_visitadas[]){
+
+	for(int i = 1; i <= nodes; i++){
+
+		int entregue = 0;
+
+		for(int j = 0; j < nodes; j++){
+
+			if(casas_visitadas[j] == i){
+				entregue = 1;
+			}
+		}
+
+		if(!entregue){
+			return 0;
+		}
+	}
+	return 1;
 }
