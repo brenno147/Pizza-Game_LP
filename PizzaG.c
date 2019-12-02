@@ -89,6 +89,8 @@ void game_menu(){
 void ranking_menu(){
 	int op;
 
+	//Menu de escolha de qual dos rankings vai mostrar que depende da dificuldade jogada
+
 	inicio:
 	system("cls");
 	printf("1 - Ranking facil\n2 - Ranking medio\n3 - Ranking dificil\n");
@@ -109,6 +111,8 @@ void ranking_menu(){
 }
 
 void print_ranking(char filename[50]){
+
+	//Leitura do arquivo de rankings e printa o nome e tempo de cada um dos 10 Jogadores
 
 	system("cls");
 
@@ -211,7 +215,7 @@ void vs_ia(char filename[50]){
 	}
 
 	int visitados[nodes]; //Vetor com todas as casas que já foram visitadas
-	int escolha;
+	int escolha;//Variavel da escolha da proxima casa a ser visitada feita pelo jogador
 
 	//Laço que expressa a quantidade de jogadas que o usuário irá fazer.
 	for(int i = 0; i < nodes; i++){
@@ -236,20 +240,23 @@ void vs_ia(char filename[50]){
 
 		scanf("%i", &escolha);//Escolha da proxima posição
 
-		//Teste da escolha
+		//Se eu estiver visitando uma casa que ja esteja no vetor visitados
 		if(casa_Repetida(escolha, i, visitados)){
+			//Se nem todas as casas tiverem sido percorridas
 			if(!entregas_Feitas(nodes, visitados)){
 				printf("Voce nao pode ir numa casa ja visitada\n\n");
 				system("pause");
 				goto inicio;
-			} else if (escolha != 1){
+			}
+			//Se todas as casas tiverem sido percorridas mas a casa escolhida não for a inicial 
+			else if (escolha != 1){
 				printf("Voce deve voltar para onde comecou\n\n");
 				system("pause");
 				goto inicio;
 			}
 		}
 
-		new_player.distancia += paths[new_player.posicao - 1][escolha - 1];
+		new_player.distancia += paths[new_player.posicao - 1][escolha - 1];//Atualização da distancia percorrida pelo Jogador
 		new_player.posicao = escolha;//Atualização da posição
 
 		printf("\n\n");
@@ -257,12 +264,8 @@ void vs_ia(char filename[50]){
 	}
 
 	system("cls");
-	printf("Parabens voce terminou percorrendo %i km", new_player.distancia);
+	printf("Parabens voce terminou percorrendo %i km", new_player.distancia);// Fim do jogo
 	system("pause");
-
-	//time_t time_final = time(NULL);
-
-	//printf("%.f", difftime(time_final, time_start));
 
 	fclose(fp);
 }
@@ -278,6 +281,7 @@ int casa_Repetida(int escolha, int posicao, int casas_visitadas[]){
 	return 0;
 }
 
+//Função que percorre todo o vetor casas_visitadas e verifica se todas as casas foram visitadas
 int entregas_Feitas(int nodes, int casas_visitadas[]){
 
 	for(int i = 1; i <= nodes; i++){
