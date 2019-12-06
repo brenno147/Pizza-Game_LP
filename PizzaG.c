@@ -7,8 +7,8 @@
 void game_menu();
 void ranking_menu(); 
 void print_ranking();
-void vs_ia_menu();
-void vs_ia();
+void vs_time_menu();
+void vs_time();
 void creditos();
 int casa_Repetida();
 int entregas_Feitas();
@@ -40,7 +40,6 @@ void main()
         game_menu();
         goto inicio;
     case 2:
-        system("cls");
   		ranking_menu();
         goto inicio;
     case 3:
@@ -66,20 +65,17 @@ void game_menu(){
 
 	inicio:
 	system("cls");
-	printf("1 - Modo VS IA\n2 - Modo Contra o tempo\n3 - Modo IA\n4 - Tutorial\n5 - Voltar\n");
+	printf("1 - Modo Contra o tempo\n2 - Modo IA\n3 - Tutorial\n4 - Voltar\n");
 	scanf("%d", &op);
 	switch(op) {
 		case 1:
-			vs_ia_menu();
+			vs_time_menu();
 			goto inicio;
 		case 2:
-
 			goto inicio;
 		case 3:
 			goto inicio;
 		case 4:
-			goto inicio;
-		case 5:
 			break;
 		default:
 			goto inicio;
@@ -94,16 +90,16 @@ void ranking_menu(){
 	inicio:
 	system("cls");
 	printf("1 - Ranking facil\n2 - Ranking medio\n3 - Ranking dificil\n");
-	scanf("%d", &op);
+	scanf("%i", &op);
 	switch(op){
 		case 1:
-			print_ranking("Rankings/records_facil.txt");
+			print_ranking("rankings/records_1.txt");
 			break;
 		case 2:
-			print_ranking("Rankings/records_medio.txt");
+			print_ranking("rankings/records_2.txt");
 			break;
 		case 3:
-			print_ranking("Rankings/record_dificil.txt");
+			print_ranking("rankings/record_3.txt");
 			break;
 		default:
 			goto inicio;
@@ -119,16 +115,14 @@ void print_ranking(char filename[50]){
 	FILE *fp;
 	fp = fopen(filename, "r");
 
-	char ranking_names[10][20];
-	int ranking_times[10];
+	Player ranking[10];
 
 	for(int i = 0; i < 10; i++){
-		fscanf(fp, "%19s", ranking_names[i]);
-		fscanf(fp, "%i", &ranking_times[i]);
+		fscanf(fp, "%19s %i", ranking[i].nome, &ranking[i].tempo);
 	}
 
 	for(int i = 0; i < 10; i++){
-		printf("%s terminou o desafio em %i segundos\n", ranking_names[i], ranking_times[i]);
+		printf("%s terminou o desafio em %i segundos\n", ranking[i].nome, ranking[i].tempo);
 	}
 
 	system("pause");
@@ -153,41 +147,40 @@ void creditos(){
 		printf("%s", creditos[i]);
 	}
 
-	printf("\n\n");
+	printf("\n\n :) \n\n");
 
-	printf(":)");
-
-	printf("\n\n");
+	system("pause");
 
 	fclose(fp);
 }
 
-void vs_ia_menu(){
-	int df;
+void vs_time_menu(){
+	int dif;
 
 	//Menu em que o usuário escolhe a dificuldade do jogo contra a IA.
 
 	inicio:
 	system("cls");
 	printf("Escolha a dificuldade: \n1 - Facil (IA facil, Mapa Pequeno) \n2 - Medio (IA mediana, Mapa Medio) \n3 - Dificil (IA dificil, Mapa Grande)\n");
-	scanf("%d", &df);
-	switch(df){
+	scanf("%d", &dif);
+	switch(dif){
 		case 1:
-			vs_ia("entregador de pizza/cidade_10.txt");
+			vs_time("entregador de pizza/cidade_10.txt");
 			break;
 		case 2:
-			vs_ia("entregador de pizza/cidade_25.txt");
+			vs_time("entregador de pizza/cidade_25.txt");
 			break;
 		case 3:
-			vs_ia("entregador de pizza/cidade_50.txt");
+			vs_time("entregador de pizza/cidade_50.txt");
 			break;
 		default:
 			goto inicio;
 	}
 }
 
+
 //Recebe o caminho do arquivo dependendo da dificuldade escolhida 
-void vs_ia(char filename[50]){
+void vs_time(char filename[50]){
 	system("cls");
 
 	//Declara um novo Jogador e seta a posição inicial, no caso a casa 1, e a pontuação inicial
@@ -216,6 +209,8 @@ void vs_ia(char filename[50]){
 
 	int visitados[nodes]; //Vetor com todas as casas que já foram visitadas
 	int escolha;//Variavel da escolha da proxima casa a ser visitada feita pelo jogador
+
+	time_t start = time(NULL);
 
 	//Laço que expressa a quantidade de jogadas que o usuário irá fazer.
 	for(int i = 0; i < nodes; i++){
@@ -263,8 +258,10 @@ void vs_ia(char filename[50]){
 		system("pause");
 	}
 
+	time_t end = time(NULL);
+
 	system("cls");
-	printf("Parabens voce terminou percorrendo %i km", new_player.distancia);// Fim do jogo
+	printf("Parabens voce terminou percorrendo %i km em %.2f segundos\n", new_player.distancia, difftime(end, start));// Fim do jogo
 	system("pause");
 
 	fclose(fp);
@@ -301,3 +298,5 @@ int entregas_Feitas(int nodes, int casas_visitadas[]){
 	}
 	return 1;
 }
+
+
