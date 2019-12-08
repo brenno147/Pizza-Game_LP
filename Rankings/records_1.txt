@@ -1,10 +1,10 @@
-Guilherme 75
-Guilherme 80
-Guilherme 84
-Guilherme 89
-Guilherme 90
-Guilherme 98
-Guilherme 110
-Guilherme 135
-Guilherme 146
-Guilherme 150
+Guilherme 299 100
+Guilherme 320 80
+Guilherme 388 84
+Guilherme 390 89
+Guilherme 420 90
+Guilherme 480 98
+Guilherme 520 43
+Guilherme 520 76
+Guilherme 550 30
+Guilherme 560 90
