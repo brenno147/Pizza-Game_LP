@@ -25,60 +25,66 @@ void main()
 {
 	setlocale(LC_ALL,"");
 
+	int game = 1;
+
     int opcao;
 
     //Menu inicial do jogo 
 
-    inicio:
-    system("cls");
-    system("color 0F");
+    while(game){
+	    system("cls");
+	    system("color 0F");
 
-    printf("1 - JOGAR \n2 - RANKINGS \n3 - CREDITOS \n4 - SAIR\n");
-    scanf("%d", &opcao);
-    switch (opcao) {
-    case 1:
-        game_menu();
-        goto inicio;
-    case 2:
-  		ranking_menu();
-        goto inicio;
-    case 3:
-        system("cls");
-        creditos();
-        goto inicio;
-    case 4:
-        system("cls");
-        printf("Voce pediu para sair, precione qualquer tecla para continuar\n");
-        break;
-    default:
-        printf("Voce deve escolher uma opcao valida\n");
-        printf("Precione qualquer tecla para voltar ao menu\n");
-        system("pause");
-        goto inicio;
+	    printf("1 - JOGAR \n2 - RANKINGS \n3 - CREDITOS \n4 - SAIR\n");
+	    scanf("%d", &opcao);
+	    switch (opcao) {
+	    case 1:
+	        game_menu();
+	        break;
+	    case 2:
+	  		ranking_menu();
+	        break;
+	    case 3:
+	        system("cls");
+	        creditos();
+	        break;
+	    case 4:
+	        system("cls");
+	        printf("Voce pediu para sair, precione qualquer tecla para continuar\n");
+	        game = 0;
+	        break;
+	    default:
+	        printf("Voce deve escolher uma opcao valida\n");
+	        printf("Precione qualquer tecla para voltar ao menu\n");
+	        system("pause");
+		}    
     }
 }
 
 void game_menu(){
 	int op;
 
-	//Menu em que o usuário escolhe o modo de jogo
+	int play_menu = 1;
 
-	inicio:
-	system("cls");
-	printf("1 - Modo Contra o tempo\n2 - Modo IA\n3 - Tutorial\n4 - Voltar\n");
-	scanf("%d", &op);
-	switch(op) {
-		case 1:
-			vs_time_menu();
-			goto inicio;
-		case 2:
-			goto inicio;
-		case 3:
-			goto inicio;
-		case 4:
-			break;
-		default:
-			goto inicio;
+	//Menu em que o usuário escolhe o modo de jogo
+	while(play_menu){
+		system("cls");
+		printf("1 - Modo Contra o tempo\n2 - Modo IA\n3 - Tutorial\n4 - Voltar\n");
+		scanf("%d", &op);
+		switch(op) {
+			case 1:
+				vs_time_menu();
+				break;
+			case 2:
+				break;
+			case 3:
+				break;
+			case 4:
+				play_menu = 0;
+				continue;
+			default:
+				break;
+		}
 	}
 }
 
@@ -87,7 +93,6 @@ void ranking_menu(){
 
 	//Menu de escolha de qual dos rankings vai mostrar que depende da dificuldade jogada
 
-	inicio:
 	system("cls");
 	printf("1 - Ranking facil\n2 - Ranking medio\n3 - Ranking dificil\n");
 	scanf("%i", &op);
@@ -102,7 +107,7 @@ void ranking_menu(){
 			print_ranking("rankings/record_3.txt");
 			break;
 		default:
-			goto inicio;
+			break;
 	}
 }
 
@@ -118,11 +123,11 @@ void print_ranking(char filename[50]){
 	Player ranking[10];
 
 	for(int i = 0; i < 10; i++){
-		fscanf(fp, "%19s %i", ranking[i].nome, &ranking[i].tempo);
+		fscanf(fp, "%19s %i %i", ranking[i].nome, &ranking[i].distancia, &ranking[i].tempo);
 	}
 
 	for(int i = 0; i < 10; i++){
-		printf("%s terminou o desafio em %i segundos\n", ranking[i].nome, ranking[i].tempo);
+		printf("%s percorreu %i km em %i segundos\n", ranking[i].nome, ranking[i].distancia, ranking[i].tempo);
 	}
 
 	system("pause");
@@ -159,9 +164,8 @@ void vs_time_menu(){
 
 	//Menu em que o usuário escolhe a dificuldade do jogo contra a IA.
 
-	inicio:
 	system("cls");
-	printf("Escolha a dificuldade: \n1 - Facil (IA facil, Mapa Pequeno) \n2 - Medio (IA mediana, Mapa Medio) \n3 - Dificil (IA dificil, Mapa Grande)\n");
+	printf("Escolha a dificuldade: \n1 - Facil (Mapa Pequeno) \n2 - Medio (Mapa Medio) \n3 - Dificil (Mapa Grande)\n");
 	scanf("%d", &dif);
 	switch(dif){
 		case 1:
@@ -174,7 +178,7 @@ void vs_time_menu(){
 			vs_time("entregador de pizza/cidade_50.txt");
 			break;
 		default:
-			goto inicio;
+			break;
 	}
 }
 
@@ -214,54 +218,64 @@ void vs_time(char filename[50]){
 
 	//Laço que expressa a quantidade de jogadas que o usuário irá fazer.
 	for(int i = 0; i < nodes; i++){
-		
-		inicio:
-		system("cls");
+		int next_Casa = 0;
 
-		//Laço que printa a coluna com a distancia de todas as casas para a posiçao em que o Jogador se encontra.
-		for(int j = 0; j < nodes; j++){
-			printf("%i - %i", j+1, paths[j][new_player.posicao - 1]);
-			printf("\n");
-		}
+		while(!next_Casa){
+			system("cls");
 
-		visitados[i] = new_player.posicao;//O vetor visitados recebe a posição em que o Jogador se encontra.
-
-		printf("\n\n");
-
-		//Laço que printa o caminho feito até agora pelo Jogador
-		for(int k = 0; k <= i; k++){
-			printf("%i -> ", visitados[k]);
-		}
-
-		scanf("%i", &escolha);//Escolha da proxima posição
-
-		//Se eu estiver visitando uma casa que ja esteja no vetor visitados
-		if(casa_Repetida(escolha, i, visitados)){
-			//Se nem todas as casas tiverem sido percorridas
-			if(!entregas_Feitas(nodes, visitados)){
-				printf("Voce nao pode ir numa casa ja visitada\n\n");
-				system("pause");
-				goto inicio;
+			//Laço que printa a coluna com a distancia de todas as casas para a posiçao em que o Jogador se encontra.
+			for(int j = 0; j < nodes; j++){
+				printf("%i - %i", j+1, paths[j][new_player.posicao - 1]);
+				printf("\n");
 			}
-			//Se todas as casas tiverem sido percorridas mas a casa escolhida não for a inicial 
-			else if (escolha != 1){
-				printf("Voce deve voltar para onde comecou\n\n");
-				system("pause");
-				goto inicio;
+
+			visitados[i] = new_player.posicao;//O vetor visitados recebe a posição em que o Jogador se encontra.
+
+			printf("\n\n");
+
+			//Laço que printa o caminho feito até agora pelo Jogador
+			for(int k = 0; k <= i; k++){
+				printf("%i -> ", visitados[k]);
 			}
+
+			scanf("%i", &escolha);//Escolha da proxima posição
+
+			//Verificar se a escolha é valida
+			if(escolha < 1 || escolha > nodes){
+				printf("\n\nValor invalido\n\n");
+				system("pause");
+				continue;
+			}
+
+			//Se eu estiver visitando uma casa que ja esteja no vetor visitados
+			if(casa_Repetida(escolha, i, visitados)){
+				//Se nem todas as casas tiverem sido percorridas
+				if(!entregas_Feitas(nodes, visitados)){
+					printf("Voce nao pode ir numa casa ja visitada\n\n");
+					system("pause");
+					continue;
+				}
+				//Se todas as casas tiverem sido percorridas mas a casa escolhida não for a inicial 
+				else if (escolha != 1){
+					printf("Voce deve voltar para onde comecou\n\n");
+					system("pause");
+					continue;
+				}
+			}
+
+			new_player.distancia += paths[new_player.posicao - 1][escolha - 1];//Atualização da distancia percorrida pelo Jogador
+			new_player.posicao = escolha;//Atualização da posição
+
+			printf("\n\n");
+			system("pause");
+			next_Casa = 1;
 		}
-
-		new_player.distancia += paths[new_player.posicao - 1][escolha - 1];//Atualização da distancia percorrida pelo Jogador
-		new_player.posicao = escolha;//Atualização da posição
-
-		printf("\n\n");
-		system("pause");
 	}
 
 	time_t end = time(NULL);
 
 	system("cls");
-	printf("Parabens voce terminou percorrendo %i km em %.2f segundos\n", new_player.distancia, difftime(end, start));// Fim do jogo
+	printf("Parabens voce terminou percorrendo %i km em %.1f segundos\n", new_player.distancia, difftime(end, start));// Fim do jogo
 	system("pause");
 
 	fclose(fp);
@@ -298,5 +312,3 @@ int entregas_Feitas(int nodes, int casas_visitadas[]){
 	}
 	return 1;
 }
-
-
