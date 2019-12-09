@@ -4,6 +4,7 @@
 #include <conio.h>
 #include <time.h>
 #include <locale.h>
+#define Pausar system("pause");
 
 void game_menu();
 void ranking_menu(); 
@@ -19,7 +20,7 @@ void ia_menu();
 void tutorial();
 void att_ranking();
 
-//Estrutura Jogador com nome, Pontuação e a posição atual do jogador no jogo.
+//Estrutura Jogador com nome, pontuação, posição atual do jogador e tempo para concluir o jogo.
 typedef struct{
 	char nome[20];
 	int distancia;
@@ -41,7 +42,8 @@ void main()
 	    system("cls");
 	    system("color 0F");
 
-	    printf("1 - JOGAR \n2 - RANKINGS \n3 - CREDITOS \n4 - SAIR\n");
+	    printf("================================ENTREGADOR DE PIZZA=======================================\n");
+	    printf("\n\n1 - JOGAR \n2 - RANKINGS \n3 - CREDITOS \n4 - SAIR\n");
 	    scanf("%d", &opcao);
 	    switch (opcao) {
 	    case 1:
@@ -61,8 +63,7 @@ void main()
 	        break;
 	    default:
 	        printf("Voce deve escolher uma opcao valida\n");
-	        printf("Precione qualquer tecla para voltar ao menu\n");
-	        system("pause");
+	        Pausar;
 		}    
     }
 }
@@ -138,7 +139,7 @@ void print_ranking(char filename[50]){
 		printf("%s percorreu %i km em %.1f segundos\n", ranking[i].nome, ranking[i].distancia, ranking[i].tempo);
 	}
 
-	system("pause");
+	Pausar;
 
 	fclose(fp);
 }
@@ -150,19 +151,15 @@ void creditos(){
 	FILE *fp;
 	fp = fopen("Creditos.txt", "r");
 	
-	char creditos[4][30];
-
-	for(int i = 0; i < 4; i++){
-		fgets(creditos[i], 30, fp);
-	}
-
-	for(int i = 0; i < 4; i++){
-		printf("%s", creditos[i]);
+	char creditos[30];
+	
+	while(fgets(creditos, 30, fp) != NULL){
+		printf("%s", creditos);
 	}
 
 	printf("\n\n :) \n\n");
 
-	system("pause");
+	Pausar;
 
 	fclose(fp);
 }
@@ -170,7 +167,7 @@ void creditos(){
 void vs_time_menu(){
 	int dif;
 
-	//Menu em que o usuário escolhe a dificuldade do jogo contra a IA.
+	//Menu em que o usuário escolhe a dificuldade do jogo contra o tempo.
 
 	system("cls");
 	printf("Escolha a dificuldade: \n1 - Facil (Mapa Pequeno) \n2 - Medio (Mapa Medio) \n3 - Dificil (Mapa Grande)\n");
@@ -251,7 +248,7 @@ void vs_time(char filename[50], int dif){
 			//Verificar se a escolha é valida
 			if(escolha < 1 || escolha > nodes){
 				printf("\n\nValor invalido\n\n");
-				system("pause");
+				Pausar;
 				continue;
 			}
 
@@ -260,13 +257,13 @@ void vs_time(char filename[50], int dif){
 				//Se nem todas as casas tiverem sido percorridas
 				if(!entregas_Feitas(nodes, visitados)){
 					printf("Voce nao pode ir numa casa ja visitada\n\n");
-					system("pause");
+					Pausar;
 					continue;
 				}
 				//Se todas as casas tiverem sido percorridas mas a casa escolhida não for a inicial 
 				else if (escolha != 1){
 					printf("Voce deve voltar para onde comecou\n\n");
-					system("pause");
+					Pausar;
 					continue;
 				}
 			}
@@ -275,7 +272,7 @@ void vs_time(char filename[50], int dif){
 			new_player.posicao = escolha;//Atualização da posição
 
 			printf("\n\n");
-			system("pause");
+			Pausar;
 			next_Casa = 1;
 		}
 	}
@@ -285,7 +282,7 @@ void vs_time(char filename[50], int dif){
 
 	system("cls");
 	printf("Parabens voce terminou percorrendo %i km em %.1f segundos\n", new_player.distancia, new_player.tempo);// Fim do jogo
-	system("pause");
+	Pausar;
 
 	att_ranking(new_player, dif);
 
@@ -326,7 +323,7 @@ int entregas_Feitas(int nodes, int casas_visitadas[]){
 void ia_menu(){
 	int dif;
 
-	//Menu em que o usuário escolhe a dificuldade do jogo contra a IA.
+	//Menu em que o usuário escolhe o mapa a ser percorrido pela IA.
 
 	system("cls");
 	printf("Escolha o mapa: \n1 - Mapa Pequeno \n2 - Mapa Medio \n3 - Mapa Grande\n");
@@ -359,6 +356,7 @@ int menor_Caminho(int v[], int visitados[], int nodes){
 	return menor_index;
 }
 
+//A função mostra um vetor das casas percorridas pela IA e depois de acordo com o nivel da IA o vetor será embaralhado.
 void ia(char filename[50]){
 	//Leitura normal do arquivo especificado anteriormente
 	system("cls");
@@ -443,7 +441,7 @@ void ia(char filename[50]){
 		printf("%d->", visitados[i] + 1);
 	}
 	printf("1\n");
-	system("pause");
+	Pausar;
 	fclose(fp);
 }
 
