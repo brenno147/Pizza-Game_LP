@@ -339,20 +339,21 @@ void ia_menu(){
 	}
 }
 
-
+//Função que retorna o menor elemento de um vetor caso o elemento não leve no vetor já visitado
 int menor_Caminho(int v[], int visitados[], int nodes){
-	int menor = 999;
-	int menor_index = 0;
+	int menor = 999;//Variável que é atualizada para achar o menor valor no vetor
+	int menor_index = 0;//Variável para achar o índice do menor valor no vetor
 	for(int i = 0; i < nodes; i++){
 		if(v[i] <= menor && !casa_Repetida(i, nodes, visitados)){
-			menor = v[i];
-			menor_index = i;
+			menor = v[i];//Atualização do menor valor
+			menor_index = i;//Atualização do indice do menor valor
 		}
 	}
 	return menor_index;
 }
 
 void ia(char filename[50]){
+	//Leitura normal do arquivo especificado anteriormente
 	system("cls");
 
 	FILE *fp;
@@ -370,13 +371,14 @@ void ia(char filename[50]){
 		}
 	}
 
-	int visitados[nodes];
-	visitados[0] = 0;
+	int visitados[nodes];//Vetor das casas visitadas pela IA
+	visitados[0] = 0;//Posição inicial
 
 	for(int i = 0; i < nodes; i++){
-		visitados[i+1] = menor_Caminho(matriz[visitados[i]], visitados, nodes);
+		visitados[i+1] = menor_Caminho(matriz[visitados[i]], visitados, nodes);//O proximo valor a ser visitado será o indice do menor valor encontrado pela função
 	}
 
+	//Variáveis de auxilio;
 	int dif;
 	int aux;
 	int k;
@@ -387,6 +389,7 @@ void ia(char filename[50]){
 
 	system("cls");
 
+	//Print do melhor caminho possivel da IA
 	printf("Melhor caminho:\n");
 
 	for(int i = 0; i < nodes; i++){
@@ -394,6 +397,7 @@ void ia(char filename[50]){
 	}
 	printf("1\n");
 
+	//Embaralhamento do vetor visitados dependendo do nivel da IA escolhido pelo usuário
 	if(dif == 1){
 		for(int i = 1; i < nodes; i++){
 			k = 1 + rand() % (nodes - 2);
@@ -425,6 +429,7 @@ void ia(char filename[50]){
 
 	printf("\n\n");
 
+	//Caminho relizado pela IA
 	printf("Caminho feito pela IA:\n");
 
 	for(int i = 0; i < nodes; i++){
