@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <conio.h>
 #include <time.h>
 #include <locale.h>
@@ -15,6 +16,8 @@ int entregas_Feitas();
 int menor_Caminho();
 void ia();
 void ia_menu();
+void tutorial();
+void att_ranking();
 
 //Estrutura Jogador com nome, Pontuação e a posição atual do jogador no jogo.
 typedef struct{
@@ -82,6 +85,7 @@ void game_menu(){
 				ia_menu();
 				break;
 			case 3:
+				tutorial();
 				break;
 			case 4:
 				play_menu = 0;
@@ -108,7 +112,7 @@ void ranking_menu(){
 			print_ranking("rankings/records_2.txt");
 			break;
 		case 3:
-			print_ranking("rankings/record_3.txt");
+			print_ranking("rankings/records_3.txt");
 			break;
 		default:
 			break;
@@ -131,7 +135,7 @@ void print_ranking(char filename[50]){
 	}
 
 	for(int i = 0; i < 10; i++){
-		printf("%s percorreu %i km em %f segundos\n", ranking[i].nome, ranking[i].distancia, ranking[i].tempo);
+		printf("%s percorreu %i km em %.1f segundos\n", ranking[i].nome, ranking[i].distancia, ranking[i].tempo);
 	}
 
 	system("pause");
@@ -173,13 +177,13 @@ void vs_time_menu(){
 	scanf("%d", &dif);
 	switch(dif){
 		case 1:
-			vs_time("entregador de pizza/cidade_10.txt");
+			vs_time("entregador de pizza/cidade_10.txt", 1);
 			break;
 		case 2:
-			vs_time("entregador de pizza/cidade_25.txt");
+			vs_time("entregador de pizza/cidade_25.txt", 2);
 			break;
 		case 3:
-			vs_time("entregador de pizza/cidade_50.txt");
+			vs_time("entregador de pizza/cidade_50.txt", 3);
 			break;
 		default:
 			break;
@@ -188,7 +192,7 @@ void vs_time_menu(){
 
 
 //Recebe o caminho do arquivo dependendo da dificuldade escolhida 
-void vs_time(char filename[50]){
+void vs_time(char filename[50], int dif){
 	system("cls");
 
 	//Declara um novo Jogador e seta a posição inicial, no caso a casa 1, e a pontuação inicial
@@ -277,10 +281,13 @@ void vs_time(char filename[50]){
 	}
 
 	time_t end = time(NULL);
+	new_player.tempo = difftime(end, start);
 
 	system("cls");
-	printf("Parabens voce terminou percorrendo %i km em %.1f segundos\n", new_player.distancia, difftime(end, start));// Fim do jogo
+	printf("Parabens voce terminou percorrendo %i km em %.1f segundos\n", new_player.distancia, new_player.tempo);// Fim do jogo
 	system("pause");
+
+	att_ranking(new_player, dif);
 
 	fclose(fp);
 }
@@ -438,4 +445,71 @@ void ia(char filename[50]){
 	printf("1\n");
 	system("pause");
 	fclose(fp);
+}
+
+void tutorial(){
+	system("cls");
+	printf("Quando iniciar o jogo aparecera uma coluna com diversos valores do tipo:\n1-x\n2-x\n3-x\n4-x\n5-x\n...");
+	printf("\nCada valor x representa a distancia da casa que voce se encontra para a casa representada pelo numero ao lado\n");
+	printf("\nE embaixo aparecera um valor: x->\n");
+	printf("Esse valor representa a casa que voce se encontra e o usuario podera inserir para que casa ir\n\n");
+	printf("O objetivo do jogador e percorrer todas as casas na menor distancia e menor tempo possivel\n");
+}
+
+void att_ranking(Player p, int dif){
+	FILE *fp;
+
+	int pos = -1;
+
+	if(dif == 1)
+		fp = fopen("Rankings/records_1.txt", "r");
+	else if(dif == 2)
+		fp = fopen("Rankings/records_2.txt", "r");
+	else if(dif == 3)
+		fp = fopen("Rankings/records_2.txt", "r");
+
+	Player ranking[10];
+
+	for(int i = 0; i < 10; i++){
+		fscanf(fp, "%19s %i %f", ranking[i].nome, &ranking[i].distancia, &ranking[i]. tempo);
+	}
+
+	for(int i = 9; i >= 0; i--){
+		if(p.distancia < ranking[i].distancia){
+			pos = i;
+		}
+		else if(p.distancia == ranking[i].distancia){
+			if(p.tempo < ranking[i].tempo){
+				pos = i;
+			}
+		}
+	}
+
+	if(pos >= 0){
+		for(int i = 9; i > pos; i--){
+			strcpy(ranking[i].nome, ranking[i-1].nome);
+			ranking[i].distancia = ranking[i-1].distancia;
+			ranking[i].tempo = ranking[i-1].tempo;
+		}
+		strcpy(ranking[pos].nome, p.nome);
+		ranking[pos].distancia = p.distancia;
+		ranking[pos].tempo = p.tempo;
+	}
+
+	fclose(fp);
+
+	FILE *new;
+
+	if(dif == 1)
+		new = fopen("Rankings/records_1.txt", "w+");
+	else if(dif == 2)
+		new = fopen("Rankings/records_2.txt", "w+");
+	else if(dif == 3)
+		new = fopen("Rankings/records_2.txt", "w+");
+
+	for(int i = 0; i < 10; i++){
+		fprintf(new, "%s %i %.0f\n", ranking[i].nome, ranking[i].distancia, ranking[i].tempo);
+	}
+
+	fclose(new);
 }
