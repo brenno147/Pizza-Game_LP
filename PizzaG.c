@@ -12,13 +12,16 @@ void vs_time();
 void creditos();
 int casa_Repetida();
 int entregas_Feitas();
+int menor_Caminho();
+void ia();
+void ia_menu();
 
 //Estrutura Jogador com nome, Pontuação e a posição atual do jogador no jogo.
 typedef struct{
 	char nome[20];
 	int distancia;
 	int posicao;
-	int tempo;
+	float tempo;
 }Player;
 
 void main()
@@ -76,6 +79,7 @@ void game_menu(){
 				vs_time_menu();
 				break;
 			case 2:
+				ia_menu();
 				break;
 			case 3:
 				break;
@@ -123,11 +127,11 @@ void print_ranking(char filename[50]){
 	Player ranking[10];
 
 	for(int i = 0; i < 10; i++){
-		fscanf(fp, "%19s %i %i", ranking[i].nome, &ranking[i].distancia, &ranking[i].tempo);
+		fscanf(fp, "%19s %i %f", ranking[i].nome, &ranking[i].distancia, &ranking[i].tempo);
 	}
 
 	for(int i = 0; i < 10; i++){
-		printf("%s percorreu %i km em %i segundos\n", ranking[i].nome, ranking[i].distancia, ranking[i].tempo);
+		printf("%s percorreu %i km em %f segundos\n", ranking[i].nome, ranking[i].distancia, ranking[i].tempo);
 	}
 
 	system("pause");
@@ -311,4 +315,122 @@ int entregas_Feitas(int nodes, int casas_visitadas[]){
 		}
 	}
 	return 1;
+}
+void ia_menu(){
+	int dif;
+
+	//Menu em que o usuário escolhe a dificuldade do jogo contra a IA.
+
+	system("cls");
+	printf("Escolha o mapa: \n1 - Mapa Pequeno \n2 - Mapa Medio \n3 - Mapa Grande\n");
+	scanf("%d", &dif);
+	switch(dif){
+		case 1:
+			ia("entregador de pizza/cidade_10.txt");
+			break;
+		case 2:
+			ia("entregador de pizza/cidade_25.txt");
+			break;
+		case 3:
+			ia("entregador de pizza/cidade_50.txt");
+			break;
+		default:
+			break;
+	}
+}
+
+
+int menor_Caminho(int v[], int visitados[], int nodes){
+	int menor = 999;
+	int menor_index = 0;
+	for(int i = 0; i < nodes; i++){
+		if(v[i] <= menor && !casa_Repetida(i, nodes, visitados)){
+			menor = v[i];
+			menor_index = i;
+		}
+	}
+	return menor_index;
+}
+
+void ia(char filename[50]){
+	system("cls");
+
+	FILE *fp;
+	fp = fopen(filename, "r");
+
+	int nodes;
+
+	fscanf(fp, "%d", &nodes);
+
+	int matriz[nodes][nodes];
+
+	for(int i = 0; i < nodes; i++){
+		for(int j = 0; j < nodes; j++){
+			fscanf(fp, "%d", &matriz[i][j]);
+		}
+	}
+
+	int visitados[nodes];
+	visitados[0] = 0;
+
+	for(int i = 0; i < nodes; i++){
+		visitados[i+1] = menor_Caminho(matriz[visitados[i]], visitados, nodes);
+	}
+
+	int dif;
+	int aux;
+	int k;
+	srand(time(NULL));
+
+	printf("Escolha o nivel da IA:\n 1 - Alta possibilidade de erro\n2 - Media possibilidade de erro\n3 - Baixa possibilidade de erro");
+	scanf("%i", &dif);
+
+	system("cls");
+
+	printf("Melhor caminho:\n");
+
+	for(int i = 0; i < nodes; i++){
+		printf("%d->", visitados[i] + 1);
+	}
+	printf("1\n");
+
+	if(dif == 1){
+		for(int i = 1; i < nodes; i++){
+			k = 1 + rand() % (nodes - 2);
+			if(rand() % 2 == 0){
+				aux = visitados [i];
+				visitados[i] = visitados[k];
+				visitados[k] = aux;
+			}
+		}
+	} else if(dif == 2){
+		for(int i = 1; i < nodes; i++){
+			k = 1 + rand() % (nodes - 2);
+			if(rand() % 4 == 0){
+				aux = visitados [i];
+				visitados[i] = visitados[k];
+				visitados[k] = aux;
+			}
+		}
+	} else if(dif == 3){
+		for(int i = 1; i < nodes; i++){
+			k = 1 + rand() % (nodes - 2);
+			if(rand() % 100 < 5){
+				aux = visitados [i];
+				visitados[i] = visitados[k];
+				visitados[k] = aux;
+			}
+		}
+	}
+
+	printf("\n\n");
+
+	printf("Caminho feito pela IA:\n");
+
+	for(int i = 0; i < nodes; i++){
+		printf("%d->", visitados[i] + 1);
+	}
+	printf("1\n");
+	system("pause");
+	fclose(fp);
 }
