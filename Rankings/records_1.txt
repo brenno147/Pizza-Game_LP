@@ -1,10 +1,11 @@
 Guilherme 299 100
-Guilherme 320 80
-Guilherme 388 84
-Guilherme 390 89
-Guilherme 420 90
-Guilherme 480 98
-Guilherme 520 43
-Guilherme 520 76
-Guilherme 550 30
-Guilherme 560 90
+Guilherme 350 30
+Guilherme 370 70
+Guilherme 400 30
+Guilherme 425 15
+Guilherme 430 16
+Guilherme 470 80
+Guilherme 482 12
+Guilherme 503 70
+Guilherme 503 120
+
